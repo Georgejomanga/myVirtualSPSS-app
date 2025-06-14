@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com https://poe.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+  <meta charset="UTF-8">
+  <title>SPSS Web Data Editor – Full Graph Suite</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- App Icon (favicon + Apple Touch) -->
+  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACAAQMAAAD58POIAAAABlBMVEUAAAD///+l2Z/dAAAAAXRSTlMAQObYZgAAAEhJREFUeAFj+P///38GBgYGJgYG9gYGBgZGhgZGBgYGBgaGBgYGJgYGBgZGxgYGBgYGJgYGBgZmBgYGJgYGJgYGJgYGJgYGJgYGJgYGBgYAAB6zA0V/QYB5AAAAAElFTkSuQmCC">
+  <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACAAQMAAAD58POIAAAABlBMVEUAAAD///+l2Z/dAAAAAXRSTlMAQObYZgAAAEhJREFUeAFj+P///38GBgYGJgYG9gYGBgZGhgZGBgYGBgaGBgYGJgYGBgZGxgYGBgYGJgYGBgZmBgYGJgYGJgYGJgYGJgYGJgYGJgYGBgYAAB6zA0V/QYB5AAAAAElFTkSuQmCC">
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+  <style>
+    :root {
+      --header-bg: #e1e2db;
+      --toolbar-bg: #e5e7e0;
+      --tab-bg: #f5f6f1;
+      --tab-active-bg: #e3ebf5;
+      --tab-inactive-bg: #f5f6f1;
+      --blue: #2166d1;
+      --blue-dark: #17417b;
+      --accent: #43b3ff;
+      --border: #bfc3be;
+      --btn-bg: #2166d1;
+      --btn-bg-hover: #17417b;
+      --btn-fg: #fff;
+      --btn-disabled: #bfc3be;
+      --table-header-bg: #e5e7e0;
+      --table-header-fg: #2166d1;
+      --ai-btn-bg: #4db5ff;
+      --ai-btn-fg: #fff;
+      --measure-nominal: #f4e2e2;
+      --measure-ordinal: #e6f4e2;
+      --measure-scale: #e2ecf4;
+    }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      background: #fafbfa;
+      color: #222;
+      min-height: 100vh;
+    }
+    .header {
+      background: var(--header-bg);
+      padding: 8px 18px 2px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    .header .left {
+      font-size: 1.4em;
+      font-weight: bold;
+      color: var(--blue);
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .header .center {
+      font-size: 1.03em;
+      color: #333;
+    }
+    .header .right {
+      display: flex;
+      gap: 0.35em;
+      align-items: center;
+    }
+    .theme-buttons button {
+      background: none;
+      border: none;
+      font-weight: bold;
+      color: var(--blue-dark);
+      border-radius: 5px;
+      padding: 1px 14px;
+      margin-left: 2px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.18s;
+    }
+    .theme-buttons button.active {
+      background: var(--btn-bg);
+      color: var(--btn-fg);
+    }
+    .menubar {
+      background: var(--toolbar-bg);
+      display: flex;
+      gap: 2em;
+      align-items: center;
+      padding: 4px 18px;
+      border-bottom: 1px solid var(--border);
+      font-size: 1.08em;
+    }
+    .menubar > .menu {
+      position: relative;
+      cursor: pointer;
+      padding: 4px 0;
+      user-select:none;
+    }
+    .menubar > .menu:hover .dropdown {
+      display: block;
+    }
+    .menubar .dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: var(--toolbar-bg);
+      border: 1px solid var(--border);
+      min-width: 175px;
+      z-index: 19;
+      box-shadow: 0 6px 16px #0002;
+    }
+    .menubar .dropdown div {
+      padding: 8px 18px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      white-space: nowrap;
+    }
+    .menubar .dropdown div:last-child { border-bottom: none; }
+    .menubar .dropdown div:hover {
+      background: #e3ebf5;
+      color: var(--accent);
+    }
+    .toolbar {
+      background: var(--toolbar-bg);
+      display: flex;
+      gap: 0.8em;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+    }
+    .toolbar button {
+      background: var(--btn-bg);
+      color: var(--btn-fg);
+      border: none;
+      border-radius: 7px;
+      padding: 8px 16px;
+      font-size: 1em;
+      font-weight: 600;
+      margin-right: 4px;
+      cursor: pointer;
+      transition: background 0.15s;
+      box-shadow: 0 2px 8px #0001;
+    }
+    .toolbar button:hover {
+      background: var(--btn-bg-hover);
+    }
+    .toolbar .save-btn {
+      background: var(--accent);
+      color: #fff;
+    }
+    .main-tabs {
+      display: flex;
+      gap: 0.4em;
+      background: var(--tab-bg);
+      border-bottom: 2px solid var(--border);
+      padding-left: 18px;
+      align-items: flex-end;
+    }
+    .main-tabs button {
+      background: var(--tab-inactive-bg);
+      border: none;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      font-size: 1.1em;
+      font-weight: 500;
+      color: #555;
+      padding: 12px 30px 9px 30px;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      border-bottom: 3px solid transparent;
+    }
+    .main-tabs button.active {
+      background: var(--tab-active-bg);
+      color: var(--blue);
+      border-bottom: 3px solid var(--blue);
+    }
+    .sheet-container {
+      margin: 0 18px;
+      margin-top: 1.2em;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 3px 22px #0001;
+      overflow-x: auto;
+      padding-bottom: 12px;
+    }
+    table.sheet {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 700px;
+      background: #fff;
+    }
+    .sheet th, .sheet td {
+      border: 1px solid var(--border);
+      padding: 7px 13px;
+      text-align: left;
+      font-size: 1.01em;
+    }
+    .sheet th {
+      background: var(--table-header-bg);
+      color: var(--table-header-fg);
+      font-weight: 700;
+      font-size: 1.08em;
+      letter-spacing: .03em;
+    }
+    .sheet td input, .sheet td select {
+      width: 96%;
+      border: none;
+      background: none;
+      color: inherit;
+      font: inherit;
+      outline: none;
+      font-size: 1em;
+      padding: 3px 2px;
+      box-sizing: border-box;
+    }
+    .sheet td input:focus, .sheet td select:focus {
+      background: #e3ebf5;
+      border-radius: 5px;
+    }
+    .sheet .measure-nominal { background: var(--measure-nominal); }
+    .sheet .measure-ordinal { background: var(--measure-ordinal); }
+    .sheet .measure-scale { background: var(--measure-scale); }
+    .output-area {
+      padding: 1.7em 2.5em 2.2em 2.2em;
+      min-height: 320px;
+      font-size: 1.1em;
+      background: #fff;
+      color: #222;
+      border-radius: 8px;
+      margin: 1.5em 18px 0 18px;
+      box-shadow: 0 2px 12px #0001;
+    }
+    .graph-controls {
+      margin-bottom: 1em;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2em;
+      align-items: flex-end;
+    }
+    .graph-canvas {
+      margin-top: 1.2em;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 640px;
+      height: 400px;
+      display: block;
+    }
+    .hidden { display: none !important; }
+    .ai-float-btn {
+      position: fixed;
+      right: 38px;
+      bottom: 46px;
+      width: 65px;
+      height: 65px;
+      background: var(--ai-btn-bg);
+      color: var(--ai-btn-fg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 18px #0002;
+      font-size: 2.3em;
+      cursor: pointer;
+      z-index: 91;
+      border: 3px solid #fff;
+      transition: box-shadow 0.18s;
+    }
+    .ai-float-btn:hover { box-shadow: 0 6px 28px #0004; }
+    .modal-bg {
+      position: fixed;
+      left: 0; top: 0;
+      width: 100vw; height: 100vh;
+      background: #0007;
+      z-index: 99;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal {
+      background: #fff;
+      color: #222;
+      min-width: 320px;
+      max-width: 96vw;
+      border-radius: 14px;
+      box-shadow: 0 8px 44px #0005;
+      padding: 2em 1.7em 1.3em 1.7em;
+      position: relative;
+      font-size: 1.1em;
+      border: 2px solid var(--blue);
+      max-height: 95vh;
+      overflow-y: auto;
+    }
+    .modal .close {
+      position: absolute;
+      top: 8px; right: 14px;
+      font-size: 1.48em;
+      color: #c00;
+      cursor: pointer;
+    }
+    .modal input, .modal select, .modal textarea {
+      font: inherit;
+      font-size: 1.08em;
+      margin: 0.5em 0;
+      padding: 0.4em 0.5em;
+      width: 98%;
+      border-radius: 6px;
+      border: 1px solid #bbb;
+      background: #f8fafb;
+      color: #222;
+    }
+    .modal button { margin: 1em 0.5em 0 0; }
+    .sync-btn {
+      background: #43b3ff;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 7px 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-left: 0.7em;
+      font-size: 0.97em;
+      transition: background 0.12s;
+    }
+    .sync-btn:hover { background: #2166d1; }
+    /* AI Poe chat tabs */
+    .ai-poe-tabs {
+      display: flex;
+      gap: 0.5em;
+      margin-bottom: 0.6em;
+      justify-content: center;
+    }
+    .ai-poe-tab-btn {
+      background: #e3ebf5;
+      color: #2166d1;
+      border: none;
+      border-radius: 7px 7px 0 0;
+      padding: 6px 18px;
+      font-size: 1.08em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.13s, color 0.13s;
+      outline: none;
+      border-bottom: 2px solid #bfc3be;
+    }
+    .ai-poe-tab-btn.active {
+      background: #43b3ff;
+      color: #fff;
+      border-bottom: 2px solid #43b3ff;
+    }
+    .ai-poe-iframe-wrap {
+      width: 95vw;
+      max-width: 550px;
+      height: 72vh;
+      min-height: 340px;
+      max-height: 76vh;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 0 auto 0 auto;
+      background: #fafbfa;
+      box-shadow: 0 2px 10px #0002;
+      border: 1px solid #bfc3be;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      transition: max-width 0.3s;
+    }
+    .ai-poe-iframe {
+      border: none;
+      width: 100%;
+      height: 100%;
+      min-height: 320px;
+      background: #fff;
+      flex: 1 1 auto;
+      border-radius: 8px;
+    }
+    @media (max-width: 900px) {
+      .sheet-container, .output-area, .main-tabs { margin-left: 0.2em; margin-right: 0.2em;}
+      .sheet th, .sheet td { font-size: 0.97em; }
+      .graph-canvas { max-width: 99vw; }
+      .ai-float-btn { right: 12px; bottom: 14px; }
+      .header, .toolbar { padding-left: 5px; padding-right: 5px; }
+      .ai-poe-iframe-wrap { max-width: 98vw;}
+    }
+    @media (max-width: 560px) {
+      .graph-canvas { max-width: 96vw; height: 220px; }
+      .modal { padding: 1em 0.4em 1em 0.4em; }
+      .ai-poe-iframe-wrap { height: 56vh; min-height: 220px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="left">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACAAQMAAAD58POIAAAABlBMVEUAAAD///+l2Z/dAAAAAXRSTlMAQObYZgAAAEhJREFUeAFj+P///38GBgYGJgYG9gYGBgZGhgZGBgYGBgaGBgYGJgYGBgZGxgYGBgYGJgYGBgZmBgYGJgYGJgYGJgYGJgYGJgYGJgYGBgYAAB6zA0V/QYB5AAAAAElFTkSuQmCC" alt="App Icon" style="height:28px;vertical-align:middle;margin-right:8px;border-radius:5px;">
+      SPSS <span style="color:#000;font-weight:400;font-size:0.9em;">Data Editor</span>
+    </div>
+    <div class="center"><span style="color:#2166d1;">Version 28.0 (Full Graph Suite)</span></div>
+    <div class="right">
+      <div class="theme-buttons">
+        <button id="theme-btn-default" class="active" onclick="setTheme('default')">Default</button>
+        <button id="theme-btn-white" onclick="setTheme('white')">White</button>
+        <button id="theme-btn-dark" onclick="setTheme('dark')">Dark</button>
+      </div>
+      <button class="sync-btn" onclick="showSignIn()">Sign In / Sync</button>
+    </div>
+  </div>
+  <div class="menubar">
+    <div class="menu">File
+      <div class="dropdown">
+        <div onclick="downloadCSV()">Save As (.csv)</div>
+        <div onclick="showImportDialog()">Import Data</div>
+        <div onclick="clearDataPrompt()">Clear All Data</div>
+      </div>
+    </div>
+    <div class="menu">Edit
+      <div class="dropdown">
+        <div onclick="addRow()">Add Case (Row)</div>
+        <div onclick="addCol()">Add Variable (Column)</div>
+        <div onclick="deleteRow()">Delete Last Row</div>
+        <div onclick="deleteCol()">Delete Last Column</div>
+      </div>
+    </div>
+    <div class="menu">Analyze
+      <div class="dropdown">
+        <div onclick="showDescriptiveDialog()">Descriptive Statistics</div>
+        <div onclick="showStatCalc()">Statistical Calculator</div>
+      </div>
+    </div>
+    <div class="menu">Graphs
+      <div class="dropdown">
+        <div onclick="showGraphDialog()">Graph Output</div>
+      </div>
+    </div>
+    <div class="menu">AI Assistant
+      <div class="dropdown">
+        <div onclick="showAIDialog()">AI (Biostatistics &amp; CP)</div>
+        <div onclick="showScenarioDialog()">Real-time Scenarios &amp; Qs</div>
+      </div>
+    </div>
+    <div class="menu">Help
+      <div class="dropdown">
+        <div onclick="showHelpDialog()">Manual &amp; Video Guides</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+  <div class="toolbar">
+    <button onclick="addRow()"><i class="fa-solid fa-plus"></i> Add Case</button>
+    <button onclick="addCol()"><i class="fa-solid fa-plus"></i> Add Variable</button>
+    <button onclick="showDescriptiveDialog()"><i class="fa-solid fa-sigma"></i> Descriptives</button>
+    <button class="save-btn" onclick="downloadCSV()"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+    <button onclick="showHelpDialog()"><i class="fa-solid fa-question"></i> Help</button>
+  </div>
+  <div class="main-tabs">
+    <button class="active" id="tabDataView" onclick="switchTab('data')">Data View</button>
+    <button id="tabVarView" onclick="switchTab('var')">Variable View</button>
+    <button id="tabOutput" onclick="switchTab('output')">Output</button>
+  </div>
+  <div id="tab-content">
+    <div class="sheet-container" id="data-view"></div>
+    <div class="sheet-container hidden" id="var-view"></div>
+    <div class="output-area hidden" id="output-view">
+      <div id="output-content">Output will be shown here.</div>
+      <div id="graph-controls" class="graph-controls hidden"></div>
+      <canvas id="graph-canvas" class="graph-canvas hidden"></canvas>
+    </div>
+  </div>
+  <div class="ai-float-btn" title="Ask AI" onclick="showAIDialog()">
+    <i class="fa-solid fa-robot"></i>
+  </div>
+  <div id="modal-bg" class="modal-bg hidden">
+    <div class="modal" id="modal-dialog">
+      <span class="close" onclick="closeModal()">×</span>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+  <!-- Removed hidden AI file upload input as Poe does not support it -->
+  <input type="file" id="file-input" accept=".csv" style="display:none">
+
+<script>
+/* ---- all original app code as before except showAIDialog ---- */
+
+/* ... All the original app's code is unchanged up to showAIDialog ... */
+
+// --- BEGIN MODIFIED showAIDialog FUNCTION ---
+
+function showAIDialog() {
+  // Poe chat URLs for the models
+  const poeURLs = {
+    'chatgpt-4o-mini': 'https://poe.com/ChatGPT-4o',
+    'claude-sonnet-4': 'https://poe.com/Claude-Sonnet-4'
+  };
+
+  // HTML for AI modal with tabs
+  showModal(`
+    <h3 style="margin-bottom:0.5em;">AI Assistant <span style="font-size:0.8em;color:#43b3ff;">via Poe.com</span></h3>
+    <div class="ai-poe-tabs">
+      <button class="ai-poe-tab-btn active" id="poe-tab-gpt" onclick="switchPoeTab('gpt')">
+        <i class="fa-brands fa-robot"></i> ChatGPT-4o (Mini)
+      </button>
+      <button class="ai-poe-tab-btn" id="poe-tab-claude" onclick="switchPoeTab('claude')">
+        <i class="fa-solid fa-brain"></i> Claude Sonnet 4
+      </button>
+    </div>
+    <div class="ai-poe-iframe-wrap">
+      <iframe id="ai-poe-iframe-gpt" class="ai-poe-iframe" src="${poeURLs['chatgpt-4o-mini']}" allow="clipboard-write; clipboard-read" title="ChatGPT-4o on Poe.com"></iframe>
+      <iframe id="ai-poe-iframe-claude" class="ai-poe-iframe hidden" src="${poeURLs['claude-sonnet-4']}" allow="clipboard-write; clipboard-read" title="Claude Sonnet 4 on Poe.com"></iframe>
+    </div>
+    <div style="font-size:0.97em;color:#888;margin-top:1em;line-height:1.5;">
+      <b>Note:</b> This AI chat runs securely on <a href="https://poe.com" target="_blank" style="color:#2166d1;">Poe.com</a>.<br>
+      For best experience, <b>sign in to Poe</b> in the chat window.<br>
+      File upload is not supported in this mode.<br>
+      <button onclick="closeModal()" style="margin-top:1.2em;">Close</button>
+    </div>
+  `);
+}
+
+// Switch tab function for Poe modal
+function switchPoeTab(tab) {
+  document.getElementById('poe-tab-gpt').classList.remove('active');
+  document.getElementById('poe-tab-claude').classList.remove('active');
+  document.getElementById('ai-poe-iframe-gpt').classList.add('hidden');
+  document.getElementById('ai-poe-iframe-claude').classList.add('hidden');
+  if(tab==='claude') {
+    document.getElementById('poe-tab-claude').classList.add('active');
+    document.getElementById('ai-poe-iframe-claude').classList.remove('hidden');
+  } else {
+    document.getElementById('poe-tab-gpt').classList.add('active');
+    document.getElementById('ai-poe-iframe-gpt').classList.remove('hidden');
+  }
+}
+
+// --- END MODIFIED showAIDialog FUNCTION ---
+
+/* ---- rest of your app's code unchanged ---- */
+
+let data = [];
+let variables = [];
+let userAccount = null;
+let autoSaveTimer = null;
+
+const defaultVars = [
+  { name: "SchoolID", value: "V1", label: "School Identifier", type: "Numeric", measure: "Nominal", values: "", width: 8, decimals: 0 },
+  { name: "SchoolName", value: "V2", label: "School Name", type: "String", measure: "Nominal", values: "", width: 24, decimals: 0 },
+  { name: "Students", value: "V3", label: "Number of Students", type: "Numeric", measure: "Scale", values: "", width: 8, decimals: 0 }
+];
+const defaultRows = [
+  ["1001", "St. Peter's", "450"],
+  ["1002", "Unity Academy", "375"]
+];
+
+function saveToLocal() {
+  localStorage.setItem("spss_data", JSON.stringify({ data, variables }));
+}
+function loadFromLocal() {
+  try {
+    const obj = JSON.parse(localStorage.getItem("spss_data"));
+    if (obj && Array.isArray(obj.variables) && Array.isArray(obj.data)) {
+      variables = obj.variables;
+      data = obj.data;
+    }
+  } catch {}
+}
+
+window.onload = function() {
+  loadFromLocal();
+  if (!variables.length) {
+    variables = JSON.parse(JSON.stringify(defaultVars));
+    data = JSON.parse(JSON.stringify(defaultRows));
+  }
+  renderAll();
+  switchTab('data');
+};
+
+function renderAll() {
+  renderDataView();
+  renderVarView();
+}
+function getVarDisplay(idx) {
+  let v = variables[idx];
+  return escapeHTML(v.label) || escapeHTML(v.name);
+}
+function renderDataView() {
+  const c = document.getElementById('data-view');
+  if (!variables.length) {
+    c.innerHTML = `<div style="padding:2em;">No variables defined.<br>
+      Use <b>Add Variable</b> to add columns.</div>`;
+  
